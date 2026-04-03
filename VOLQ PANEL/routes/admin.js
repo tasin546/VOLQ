@@ -1548,7 +1548,7 @@ router.get("/admin/auditlogs", isAdmin, async (req, res) => {
 
 router.get("/admin/plugins", isAdmin, async (req, res) => {
   try {
-    const allPlugins = Object.values(pluginsData).map(p => p.config);
+    const allPlugins = Object.values(pluginsData).map(p => p.config).filter(p => !p.hidden);
     const enabledPlugins = allPlugins.filter(p => p.enabled !== false);
     const pluginSidebar = {};
     allPlugins.forEach(p => {

@@ -270,13 +270,13 @@
 
         <!-- Profile Section -->
         <div class="p-6 border-t border-white/5">
-            <div class="p-4 rounded-3xl bg-white/[0.01] border border-white/5 flex items-center gap-4 group cursor-pointer hover:bg-white/[0.04] transition-all">
+            <a href="/account" class="p-4 rounded-3xl bg-white/[0.01] border border-white/5 flex items-center gap-4 group cursor-pointer hover:bg-white/[0.04] transition-all block">
                 <img class="w-10 h-10 rounded-2xl bg-zinc-800 border border-white/5" src="https://api.dicebear.com/9.x/thumbs/svg?seed=<%= user.username %>" alt="Avatar">
                 <div class="min-w-0">
                     <p class="text-[11px] font-bold text-white/90 truncate capitalize"><%= user.username %></p>
-                    <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-[0.1em]">Administrator</p>
+                    <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-[0.1em]"><%= user.admin ? 'Administrator' : 'User' %></p>
                 </div>
-            </div>
+            </a>
         </div>
     </aside>
 

@@ -5,10 +5,5 @@
     "author": "privt00",
     "main": "index.js",
     "router": "example",
-    "adminsidebar": {
-        "example url": "/example"
-    },
-    "sidebar": {
-        "example url": "/example"
-    }
+    "hidden": true
 }

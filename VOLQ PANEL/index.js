@@ -27,7 +27,7 @@ const SqliteStore = require("better-sqlite3-session-store")(session);
 const sessionStorage = new sqlite("sessions.db");
 const { loadPlugins } = require("./plugins/loadPls.js");
 let plugins = loadPlugins(path.join(__dirname, "./plugins"));
-plugins = Object.values(plugins).map((plugin) => plugin.config);
+plugins = Object.values(plugins).map((plugin) => plugin.config).filter((p) => !p.hidden);
 
 const { init } = require("./handlers/init.js");
 

@@ -156,6 +156,16 @@
                         return;
                     }
 
+                    if (stats && stats.error) {
+                        statusBg.className = 'px-3 py-1 bg-red-500/10 rounded-lg border border-red-500/20';
+                        statusElement.className = 'text-[9px] font-bold text-red-500 uppercase tracking-widest';
+                        statusElement.textContent = 'Offline';
+                        ramUsageElement.textContent = '0 MB';
+                        cpuUsageElement.textContent = '0%';
+                        if (ramProgress) ramProgress.style.width = '0%';
+                        return;
+                    }
+
                     if (stats && !stats.error) {
                         const ramUsageRaw = stats.memory_stats.usage / 1024;
                         const ramLimitRaw = stats.memory_stats.limit / 1024;

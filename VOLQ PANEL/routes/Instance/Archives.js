@@ -158,13 +158,13 @@ router.post('/instance/:id/archives/create', async (req, res) => {
 
         const response = await axios(RequestData);
         if (response.status === 200) {
-            res.redirect('/instance/' + id + '/archives');
+            res.status(200).json({ success: true, message: 'Archive created successfully' });
         } else {
-            res.status(500).send('Failed to create archive');
+            res.status(500).json({ success: false, message: 'Failed to create archive' });
         }
     } catch (error) {
         console.error('Error creating archive:', error);
-        res.status(500).send(error.response?.data?.message || 'Failed to create archive');
+        res.status(500).json({ success: false, message: error.response?.data?.message || 'Failed to create archive' });
     }
 });
 

@@ -1,12 +1,18 @@
 <%- include('../components/template') %>
 <main class="p-4 sm:p-8 lg:p-16 space-y-8 lg:space-y-12" id="content">
-    <%
+    <% 
        function formatLastUpdated(dateString) {
           const date = new Date(dateString);
           const now = new Date();
-          const diffTime = Math.abs(now - date);
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          return diffDays > 30 ? date.toLocaleDateString() : `${diffDays}d ago`;
+          const diffMs = Math.abs(now - date);
+          const diffMins = Math.floor(diffMs / (1000 * 60));
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+          if (diffMins < 1) return 'Just now';
+          if (diffMins < 60) return `${diffMins}m ago`;
+          if (diffHours < 24) return `${diffHours}h ago`;
+          if (diffDays <= 30) return `${diffDays}d ago`;
+          return date.toLocaleDateString();
        }
     %>
 
@@ -49,6 +55,18 @@
             </div>
             <input type="file" id="fileInput" multiple class="hidden">
         </div>
+    </div>
+
+    <!-- Upload Progress Bar -->
+    <div id="uploadProgressContainer" class="hidden liquid-glass rounded-2xl border border-white/5 p-6 space-y-3">
+        <div class="flex justify-between items-center">
+            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Uploading Files...</span>
+            <span id="uploadPercent" class="text-xs font-black text-blue-400 tracking-widest">0%</span>
+        </div>
+        <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <div id="uploadBar" class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-300" style="width:0%"></div>
+        </div>
+        <p id="uploadStatus" class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Preparing transfer...</p>
     </div>
 
     <%- include('../components/instance') %>
@@ -244,9 +262,33 @@
         const fd = new FormData();
         [...upInp.files].forEach(f => fd.append('files', f));
         
+        const progressContainer = document.getElementById('uploadProgressContainer');
+        const uploadBar = document.getElementById('uploadBar');
+        const uploadPercent = document.getElementById('uploadPercent');
+        const uploadStatus = document.getElementById('uploadStatus');
+        progressContainer.classList.remove('hidden');
+
         const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                uploadBar.style.width = pct + '%';
+                uploadPercent.textContent = pct + '%';
+                uploadStatus.textContent = pct < 100 ? 'Transferring data stream...' : 'Finalizing upload...';
+            }
+        };
         xhr.open('POST', `/instance/${instanceId}/files/upload${currentPath ? '?path=' + currentPath : ''}`);
-        xhr.onload = () => window.location.reload();
+        xhr.onload = () => {
+            uploadBar.style.width = '100%';
+            uploadPercent.textContent = '100%';
+            uploadStatus.textContent = 'Upload complete';
+            setTimeout(() => window.location.reload(), 500);
+        };
+        xhr.onerror = () => {
+            uploadStatus.textContent = 'Upload failed';
+            uploadBar.classList.remove('from-blue-600', 'to-indigo-600');
+            uploadBar.classList.add('bg-rose-500');
+        };
         xhr.send(fd);
     };
 
@@ -270,6 +312,20 @@
         } catch(err) {
             alert('Failed to create archive: ' + err.message);
         }
+    }
+
+    // File search filter
+    const searchInput2 = document.getElementById('searchInput2');
+    if (searchInput2) {
+        searchInput2.addEventListener('input', () => {
+            const term = searchInput2.value.toLowerCase();
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const name = row.querySelector('td:nth-child(2) span');
+                if (name) {
+                    row.style.display = name.textContent.toLowerCase().includes(term) ? '' : 'none';
+                }
+            });
+        });
     }
 
     // Disk Stats

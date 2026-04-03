@@ -6,13 +6,11 @@ const config = require('../config.json');
 async function getSMTPSettings() {
   const smtpSettings = await db.get('smtp_settings');
   const name = await db.get('name') || 'VOLQ Panel';
-  let secure = true
   if (!smtpSettings) {
     throw new Error('SMTP settings not found');
   }
-  if (smtpSettings.port == 587 || smtpSettings.port == 25) {
-    secure = false
-    const transporter = nodemailer.createTransport({
+  const secure = !(smtpSettings.port == 587 || smtpSettings.port == 25);
+  const transporter = nodemailer.createTransport({
     host: smtpSettings.server,
     port: smtpSettings.port,
     secure: secure,
@@ -21,20 +19,9 @@ async function getSMTPSettings() {
       pass: smtpSettings.password,
     },
     tls: {
-        rejectUnauthorized: true 
+      rejectUnauthorized: false
     },
   });
-  } else {
-const transporter = nodemailer.createTransport({
-    host: smtpSettings.server,
-    port: smtpSettings.port,
-    secure: secure,
-    auth: {
-      user: smtpSettings.username,
-      pass: smtpSettings.password,
-    },
-  });
-  }
   
   return { transporter, smtpSettings, name };
 }

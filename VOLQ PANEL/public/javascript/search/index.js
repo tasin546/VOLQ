@@ -12,7 +12,7 @@ const searchModal = document.getElementById("searchModal");
 const modalContent = document.querySelector(".modal-content");
 const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
-const navLinks = document.querySelectorAll(".nav-link");
+const navLinks = document.querySelectorAll(".nav-item-glass");
 let selected = "";
 
 function filterLinks(searchTerm) {
