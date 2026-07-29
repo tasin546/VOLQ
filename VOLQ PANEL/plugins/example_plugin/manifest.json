@@ -1,0 +1,9 @@
+{
+    "name": "Example Plugin",
+    "version": "1.0.0",
+    "description": "The Description of the Example Plugin",
+    "author": "privt00",
+    "main": "index.js",
+    "router": "example",
+    "hidden": true
+}
